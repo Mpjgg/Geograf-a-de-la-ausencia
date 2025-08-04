@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>geografía de la ausencia</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: "Times New Roman", serif;
+            font-size: 14px;
+            background: #fff;
+            color: #000;
+            overflow: hidden;
+        }
+        
+        .frame {
+            position: absolute;
+            border: 2px solid #000;
+            background: #fff;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        .frame:hover {
+            background: #f8f8f8;
+        }
+        
+        .frame-content {
+            padding: 8px;
+            height: calc(100% - 16px);
+            overflow: auto;
+            pointer-events: none;
+        }
+        
+        .frame-content a {
+            pointer-events: all;
+        }
+        
+        .frame-content a:hover {
+            animation: linkPulse 0.3s ease;
+        }
+        
+        @keyframes linkPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Vernacular web elements */
+        .under-construction {
+            background: repeating-linear-gradient(
+                45deg,
+                #ffff00,
+                #ffff00 10px,
+                #000 10px,
+                #000 20px
+            );
+            color: #000;
+            padding: 2px;
+            font-size: 8px;
+            animation: construction 2s infinite;
+        }
+        
+        @keyframes construction {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .visitor-counter {
+            font-family: "Courier New", monospace;
+            font-size: 8px;
+            color: #666;
+            border: 1px solid #666;
+            padding: 2px;
+            background: #fff;
+        }
+        
+        .broken-image {
+            width: 50px;
+            height: 30px;
+            border: 1px solid #000;
+            background: #fff;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .broken-image::before {
+            content: "🖼️";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+        
+        .broken-image::after {
+            content: "IMG";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            font-size: 6px;
+            font-family: "Courier New", monospace;
+        }
+        
+        /* Slow loading simulation */
+        .loading-text {
+            animation: loadingType 3s steps(20) infinite;
+            font-family: "Courier New", monospace;
+            font-size: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        @keyframes loadingType {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        /* Browser chrome simulation */
+        .browser-bar {
+            background: #c0c0c0;
+            border: 1px inset #c0c0c0;
+            font-size: 9px;
+            padding: 2px;
+            font-family: "Arial", sans-serif;
+            color: #000;
+        }
+        
+        /* Animated GIF simulation */
+        .gif-placeholder {
+            width: 60px;
+            height: 40px;
+            background: #000;
+            color: #00ff00;
+            font-family: "Courier New", monospace;
+            font-size: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: gifFlicker 0.5s infinite;
+        }
+        
+        @keyframes gifFlicker {
+            0%, 50% { background: #000; color: #00ff00; }
+            51%, 100% { background: #00ff00; color: #000; }
+        }
+        
+        a {
+            color: #000;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        a:hover {
+            background: #000;
+            color: #fff;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .small {
+            font-size: 11px;
+        }
+        
+        .mono {
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+        }
+        
+        pre {
+            white-space: pre-wrap;
+            font-family: "Courier New", monospace;
+            font-size: 11px;
+            margin: 5px 0;
+            line-height: 1.3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #000;
+            margin: 8px 0;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .loading {
+            animation: loadingDots 2s infinite;
+        }
+        
+        @keyframes loadingDots {
+            0% { content: "..."; }
+            25% { content: ".."; }
+            50% { content: "."; }
+            75% { content: ""; }
+            100% { content: "..."; }
+        }
+        
+        .corrupted {
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 1px,
+                #000 1px,
+                #000 2px
+            );
+            color: #fff;
+            animation: glitchText 3s infinite;
+        }
+        
+        @keyframes glitchText {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(2px, 0); }
+            94% { transform: translate(-2px, 0); }
+            96% { transform: translate(2px, 0); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error {
+            color: #000;
+            background: #fff;
+            border: 1px solid #000;
+            padding: 2px;
+            font-family: "Courier New", monospace;
+            font-size: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            body { font-size: 12px; }
+            .frame-content { padding: 4px; }
+            pre { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Initial frame structure - will subdivide through user interaction -->
+<frameset id="mainFrameset" rows="100%">
+    <frame id="frame1" style="border: 2px solid #000;">
+        <div class="frame-content">
+            <div class="center">
+                <h2>GEOGRAFÍA DE LA AUSENCIA</h2>
+            </div>
+            <hr>
+            <div class="mono small">
+                >> <span class="blink">_</span>
+            </div>
+            <br>
+            <div style="text-align: center;">
+                <a onclick="subdivideFrame('frame1', 'ritual')">COMENZAR</a>
+            </div>
+        </div>
+    </frame>
+</frameset>
+
+<script>
+let frameCounter = 1;
+let currentPath = [];
+let navigationHistory = [];
+
+const content = {
+    ritual: {
+        title: "1. RITUAL MATUTINO",
+        text: `Preparo dos cafés.
+El tuyo se enfría
+mientras desayuno.
+
+Tu silla vacía
+más presente
+que mi cuerpo.`,
+        links: [
+            { text: "¿quién se sienta ahí?", target: "instrucciones" },
+            { text: "el café se enfría", target: "sonidos" }
+        ]
+    },
+    
+    instrucciones: {
+        title: "2. INSTRUCCIONES PARA ENCONTRAR FANTASMAS",
+        text: `No busques en los cementerios.
+Lxs muertos no viven ahí.
+
+Búscalo: en el gesto exacto
+con que te rascas la cara.
+En esa forma de fruncir
+el ceño cuando piensas.
+
+En tu risa
+---su risa---
+la misma música.
+
+Los fantasmas habitan
+En el aroma
+en los gestos heredados
+en las palabras que dijiste
+sin saber
+que eran suyas.`,
+        links: [
+            { text: "buscar en los gestos", target: "inventario" },
+            { text: "escuchar la risa", target: "dialogo" }
+        ]
+    },
+    
+    cartografia: {
+        title: "3. CARTOGRAFÍA DE LO IMPOSIBLE",
+        text: `Hay un mapa que solo yo conozco. Las calles llevan nombres de conversaciones que no tuvimos, las avenidas principales son las preguntas que no te hice a tiempo. El centro de la ciudad es aquella tarde de domingo cuando te quedaste dormido viendo fútbol y yo me senté a tu lado, sin despertar, solo para escuchar.
+
+En este mapa, tu muerte es apenas un barrio más. No es el final de la ciudad: es la zona donde cambian los códigos postales, donde las cartas tardan más en llegar pero siempre llegan. Donde tu voz se vuelve eco pero sigue siendo tu voz.
+
+He caminado tanto por este territorio que ya conozco cada esquina de tu ausencia. Sé exactamente en qué momento del día tu recuerdo pesa más, a qué hora tu presencia se vuelve casi tangible. Las 3 de la tarde: cuando solía llamarte. Las 5 de la mañana: cuando me dabas los buenos días.
+
+El tiempo no cura nada. Solo te enseña a hablar el idioma de los que se fueron sin irse.`,
+        links: [
+            { text: "explorar el mapa", target: "fisica" },
+            { text: "cambiar de barrio", target: "manual" }
+        ]
+    },
+    
+    fisica: {
+        title: "4. FÍSICA CUÁNTICA DOMÉSTICA",
+        text: `Tu ausencia
+ocupa lugar.
+
+Se sienta en tu silla,
+come de tu plato,
+duerme en tu lado de la cama.
+
+Presencia
+perfecta
+de lo que no está.`,
+        links: [
+            { text: "medir la ausencia", target: "teorema" },
+            { text: "tocar lo invisible", target: "sonidos" }
+        ]
+    },
+    
+    sonidos: {
+        title: "5. LOS SONIDOS QUE DEJASTE",
+        text: `El crujido de la puerta cuando llegaba tarde.
+El crujido de mis huesos cuando siento tu falta.
+El rumor del periódico los domingos por la mañana.
+El rumor de mi corazón que aún te espera.
+El silbido desafinado de esa canción que no sé cómo se llama.
+El silbido del viento que trae tu nombre.
+
+Los sonidos que dejaste
+siguen sonando
+en mis oídos que aprendieron
+a escuchar lo invisible.`,
+        links: [
+            { text: "amplificar", target: "dialogo" },
+            { text: "silencio", target: "epilogo" }
+        ]
+    },
+    
+    teorema: {
+        title: "6. TEOREMA",
+        text: `Si papá = ausencia
+y ausencia = presencia
+entonces papá = presente
+
+`,
+        links: [
+            { text: "verificar demostración", target: "inventario" },
+            { text: "ERROR: división por cero", target: "manual" }
+        ]
+    },
+    
+    inventario: {
+        title: "7. INVENTARIO DE LO QUE PERMANECE",
+        text: `Tu forma de decir mi nombre
+---como quien abre una ventana---
+El olor de tu loción
+mezclada con pintadito.
+Tus libros subrayados con lápiz
+---nunca lapicera---
+porque "las ideas pueden cambiar, mamita".
+Tu forma de resolver problemas:
+despacio
+con paciencia
+explicándome tres veces
+hasta que yo entendiera.
+Tu risa cuando contabas chistes malos.
+Tu silencio cuando no sabías qué decir
+pero te quedabas igual
+porque quedarse era suficiente.
+
+Todo lo que eras
+sigue siendo
+en todo lo que soy.`,
+        links: [
+            { text: "abrir la ventana", target: "dialogo" },
+            { text: "cambiar de idea", target: "cartografia" }
+        ]
+    },
+    
+    dialogo: {
+        title: "8. DIÁLOGO EN PRESENTE CONTINUO",
+        text: `---Papá
+
+---Aquí estoy
+
+---¿Dónde?
+
+---En tu forma de caminar
+
+---No te veo
+
+---Mírate las cejas
+
+---Son iguales a las tuyas
+
+---Por eso no me fui
+
+---¿Te duele estar muerto?
+
+---Me duele que pienses que estoy muerto
+
+---¿Entonces?
+
+---Estoy más vivo que nunca
+en cada cosa que haces
+pensando en mí`,
+        links: [
+            { text: "mirar al espejo", target: "manual" },
+            { text: "seguir hablando", target: "epilogo" }
+        ]
+    },
+    
+    manual: {
+        title: "9. MANUAL PARA HABITAR LA MITAD DEL VACÍO",
+        text: `Primero: entender que se puede estar completo e incompleto al mismo tiempo. La familia se vuelve una silla de tres patas que funciona, pero cojea. Mamá sigue ahí, pero la casa aprendió un nuevo equilibrio, un nuevo silencio.
+
+Segundo: aprender que los muertos no se van, se transforman. Se vuelven aire, intuición, esa voz interior que te dice "cuidado" justo antes de que pase algo malo. Se vuelven coincidencias demasiado perfectas para ser casuales. Se vuelven la forma en que mamá sonríe cuando habla de él.
+
+Tercero: aceptar que vas a buscarlo en otres. En la forma en que sostienen el periódico, en cómo se ríen, en el timbre de voz cuando dicen tu nombre. Es normal. Es inevitable. Es una forma de amor que no sabe rendirse.
+
+Cuarto: permitirte hablarle. En voz alta, en voz baja, con el pensamiento. La muerte es una puerta translúcida: se puede ver a través, se puede tocar, se puede atravesar en ambas direcciones.
+
+Quinto: hacer. Siempre hacer. Porque al hacer se hace materia con la que se pueden construir puentes hacia lo imposible. Y él está del otro lado, viendo cómo aprendiste a convertir el dolor en algo.`,
+        links: [
+            { text: "página siguiente", target: "epilogo" },
+            { text: "volver al principio", target: "ritual" }
+        ]
+    },
+    
+    epilogo: {
+        title: "10. EPÍLOGO EN TIEMPO PRESENTE",
+        text: `No escribo sobre tu muerte.
+Escribo sobre tu vida
+que sigue
+en la mía.
+
+No escribo desde tu ausencia.
+Escribo desde tu presencia
+invisible pero cierta.
+
+No escribo para recordarte.
+Escribo porque te recuerdo
+escribo porque me recuerdas
+escribo porque aún estás aquí.`,
+        links: [
+            { text: "volver al principio", target: "ritual" },
+            { text: "seguir escribiendo", target: "echo" }
+        ]
+    },
+    
+    echo: {
+        title: "ECO",
+        text: `...aún estás aquí
+...invisible pero cierta
+...sigue en la mía
+...tiempo presente`,
+        links: [
+            { text: "otra vez", target: "ritual" },
+            { text: "más profundo", target: "fragments" }
+        ]
+    },
+    
+    fragments: {
+        title: "FRAGMENTOS",
+        text: `mamita
+las ideas pueden cambiar
+no me fui
+tu silla vacía`,
+        links: [
+            { text: "papá", target: "dialogo" },
+            { text: "continuar", target: "loop" }
+        ]
+    },
+    
+    loop: {
+        title: "BUCLE INFINITO",
+        text: `Cada vez que termino
+vuelvo a empezar.
+Cada vez que empiezo
+recuerdo el final.`,
+        links: [
+            { text: "otra geografía", target: "ritual" },
+            { text: "perderse", target: "void" }
+        ]
+    },
+    
+    void: {
+        title: "VACÍO",
+        text: `...`,
+        links: [
+            { text: "regresar", target: "ritual" },
+            { text: "buscar", target: "instrucciones" }
+        ]
+    }
+};
+
+function subdivideFrame(frameId, contentKey, event) {
+    // Prevent multiple rapid clicks on same frame
+    const frame = document.getElementById(frameId);
+    if (!frame || frame.dataset.subdividing === 'true') return;
+    
+    const frameRect = frame.getBoundingClientRect();
+    const minWidth = 200; // Minimum width in pixels
+    const minHeight = 150; // Minimum height in pixels
+    
+    // If frame is too small, don't subdivide - just change content
+    if (frameRect.width < minWidth * 2 || frameRect.height < minHeight * 2) {
+        // Just change the content instead of subdividing
+        const contentContainer = frame.querySelector('.frame-content');
+        if (contentContainer) {
+            loadContent(contentContainer.id, contentKey);
+        }
+        return;
+    }
+    
+    frame.dataset.subdividing = 'true';
+    frameCounter++;
+    
+    const parentFrame = frame.parentElement || document.body;
+    const parentRect = parentFrame.getBoundingClientRect();
+    
+    // Calculate relative position within parent
+    const relativeLeft = ((frameRect.left - parentRect.left) / parentRect.width) * 100;
+    const relativeTop = ((frameRect.top - parentRect.top) / parentRect.height) * 100;
+    const relativeWidth = (frameRect.width / parentRect.width) * 100;
+    const relativeHeight = (frameRect.height / parentRect.height) * 100;
+    
+    // Store navigation path
+    currentPath.push(contentKey);
+    navigationHistory.push(contentKey);
+    
+    // Choose subdivision type based on frame dimensions
+    let subdivisionType;
+    const aspectRatio = frameRect.width / frameRect.height;
+    
+    if (frameRect.width > minWidth * 3 && frameRect.height > minHeight * 3) {
+        // Large frames can be divided into quads or triples
+        subdivisionType = Math.random() > 0.3 ? 'quad' : (Math.random() > 0.5 ? 'triple-h' : 'triple-v');
+    } else if (aspectRatio > 1.5) {
+        // Wide frames - divide vertically
+        subdivisionType = 'vertical';
+    } else if (aspectRatio < 0.7) {
+        // Tall frames - divide horizontally
+        subdivisionType = 'horizontal';
+    } else {
+        // Square-ish frames - choose randomly between horizontal and vertical
+        subdivisionType = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+    }
+    
+    let newFramesHTML = '';
+    
+    if (subdivisionType === 'quad') {
+        // Divide into 4 quadrants
+        newFramesHTML = `
+            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())" 
+                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
+                <div class="frame-content" id="content${frameCounter}a"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
+                 style="left: ${relativeLeft + relativeWidth/2}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
+                <div class="frame-content" id="content${frameCounter}b"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}c" onclick="subdivideFrame('frame${frameCounter}c', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop + relativeHeight/2}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
+                <div class="frame-content" id="content${frameCounter}c"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}d" onclick="subdivideFrame('frame${frameCounter}d', getRandomContent())"
+                 style="left: ${relativeLeft + relativeWidth/2}%; top: ${relativeTop + relativeHeight/2}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
+                <div class="frame-content" id="content${frameCounter}d"></div>
+            </div>
+        `;
+    } else if (subdivisionType === 'triple-h') {
+        // Three horizontal strips
+        newFramesHTML = `
+            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
+                <div class="frame-content" id="content${frameCounter}a"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop + relativeHeight/3}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
+                <div class="frame-content" id="content${frameCounter}b"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}c" onclick="subdivideFrame('frame${frameCounter}c', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop + 2*relativeHeight/3}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
+                <div class="frame-content" id="content${frameCounter}c"></div>
+            </div>
+        `;
+    } else if (subdivisionType === 'triple-v') {
+        // Three vertical columns
+        newFramesHTML = `
+            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
+                <div class="frame-content" id="content${frameCounter}a"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
+                 style="left: ${relativeLeft + relativeWidth/3}%; top: ${relativeTop}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
+                <div class="frame-content" id="content${frameCounter}b"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}c" onclick="subdivideFrame('frame${frameCounter}c', getRandomContent())"
+                 style="left: ${relativeLeft + 2*relativeWidth/3}%; top: ${relativeTop}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
+                <div class="frame-content" id="content${frameCounter}c"></div>
+            </div>
+        `;
+    } else if (subdivisionType === 'horizontal') {
+        // Split horizontally
+        newFramesHTML = `
+            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight}%;">
+                <div class="frame-content" id="content${frameCounter}a"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
+                 style="left: ${relativeLeft + relativeWidth/2}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight}%;">
+                <div class="frame-content" id="content${frameCounter}b"></div>
+            </div>
+        `;
+    } else {
+        // Split vertically
+        newFramesHTML = `
+            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth}%; height: ${relativeHeight/2}%;">
+                <div class="frame-content" id="content${frameCounter}a"></div>
+            </div>
+            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
+                 style="left: ${relativeLeft}%; top: ${relativeTop + relativeHeight/2}%; width: ${relativeWidth}%; height: ${relativeHeight/2}%;">
+                <div class="frame-content" id="content${frameCounter}b"></div>
+            </div>
+        `;
+    }
+    
+    // Remove the original frame and add new ones
+    frame.remove();
+    parentFrame.insertAdjacentHTML('beforeend', newFramesHTML);
+    
+    // Load content into new frames
+    const newFrameIds = ['a', 'b', 'c', 'd'].slice(0, subdivisionType === 'quad' ? 4 : subdivisionType.includes('triple') ? 3 : 2);
+    newFrameIds.forEach((suffix, index) => {
+        const newContentId = `content${frameCounter}${suffix}`;
+        if (index === 0) {
+            loadContent(newContentId, contentKey);
+        } else {
+            loadContent(newContentId, getRandomContent());
+        }
+    });
+    
+    // Corrupt frames occasionally
+    if (Math.random() > 0.85) {
+        setTimeout(() => {
+            const randomSuffix = newFrameIds[Math.floor(Math.random() * newFrameIds.length)];
+            corruptFrame(`frame${frameCounter}${randomSuffix}`);
+        }, 1000 + Math.random() * 2000);
+    }
+}
+
+function getRandomContent() {
+    const contentKeys = Object.keys(content);
+    return contentKeys[Math.floor(Math.random() * contentKeys.length)];
+}
+
+function loadContent(containerId, contentKey) {
+    const container = document.getElementById(containerId);
+    const data = content[contentKey];
+    
+    if (!data) {
+        // Si no encuentra el contenido, crear uno aleatorio
+        const randomTitles = ["MEMORIA PERDIDA", "RASTRO", "HUELLA", "SOMBRA"];
+        const randomTexts = [
+            "papá\n¿dónde estás?",
+            "tu risa\n---su risa---\nla misma música",
+            "mírate las cejas\nson iguales",
+            "aquí estoy\nsiempre estuve"
+        ];
+        const randomTitle = randomTitles[Math.floor(Math.random() * randomTitles.length)];
+        const randomText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
+        
+        container.innerHTML = `
+            <div class="center"><strong>${randomTitle}</strong></div>
+            <hr>
+            <pre>${randomText}</pre>
+            <hr>
+            <div class="small">
+                <a onclick="subdivideFrame('${containerId.replace('content', 'frame')}', 'ritual')">volver</a> | 
+                <a onclick="subdivideFrame('${containerId.replace('content', 'frame')}', 'dialogo')">buscar</a>
+            </div>
+            <br>
+            <div class="mono small">
+                [${currentPath.length}] >> <span class="blink">_</span>
+            </div>
+        `;
+        return;
+    }
+    
+    let linksHtml = '';
+    data.links.forEach((link, index) => {
+        linksHtml += `<a onclick="event.stopPropagation(); subdivideFrame('${containerId.replace('content', 'frame')}', '${link.target}')">${link.text}</a>`;
+        if (index < data.links.length - 1) linksHtml += ' | ';
+    });
+    
+    container.innerHTML = `
+        <div class="center"><strong>${data.title}</strong></div>
+        <hr>
+        <pre>${data.text}</pre>
+        <hr>
+        <div class="small">${linksHtml}</div>
+        <br>
+        <div class="mono small">
+            [${currentPath.length}] >> <span class="blink">_</span>
+        </div>
+    `;
+}
+
+function loadNavigationFrame(containerId, contentKey) {
+    const container = document.getElementById(containerId);
+    const data = content[contentKey];
+    
+    if (!data) return;
+    
+    container.innerHTML = `
+        <div class="small">
+            <div class="center"><em>MEMORIA ANTERIOR</em></div>
+            <hr>
+            <div class="small">${data.title}</div>
+            <br>
+            <div style="font-size: 9px; line-height: 1.2;">
+                ${data.text.substring(0, 100)}${data.text.length > 100 ? '...' : ''}
+            </div>
+        </div>
+    `;
+}
+
+function loadSystemFrame(containerId) {
+    const container = document.getElementById(containerId);
+    const messages = [
+        'Presencia detectada',
+        'Memoria fragmentada', 
+        'tu silla vacía',
+        'Ausencia = presente',
+        'papá',
+        'aquí estoy'
+    ];
+    
+    const vernacularElements = [
+        '<div class="under-construction">🚧 EN CONSTRUCCIÓN 🚧</div>',
+        '<div class="visitor-counter">👁️ Visitantes: 00001</div>',
+        '<div class="broken-image"></div>',
+        '<div class="gif-placeholder">GIF</div>',
+        '<div class="browser-bar">Netscape Navigator - [Página sin título]</div>',
+        '<div class="loading-text">Estableciendo conexión con servidor...</div>'
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    const randomElement = vernacularElements[Math.floor(Math.random() * vernacularElements.length)];
+    
+    const shouldShowVernacular = Math.random() > 0.6;
+    
+    container.innerHTML = `
+        <div class="mono small">
+            <hr>
+            >> ${randomMessage}<br>
+            >> ${currentPath.length}<br>
+            >> ${new Date().toLocaleTimeString()}<br>
+            <br>
+            ${shouldShowVernacular ? randomElement + '<br>' : ''}
+            >> <span class="blink">█</span>
+        </div>
+    `;
+}
+
+function corruptFrame(frameId) {
+    const frame = document.getElementById(frameId);
+    if (frame) {
+        frame.classList.add('corrupted');
+        const content = frame.querySelector('.frame-content');
+        if (content) {
+            content.innerHTML = `
+                <div class="center">
+                    <div class="error">las ideas pueden cambiar</div>
+                    <br>
+                    <div class="small">█████████</div>
+                    <div class="small">█ perdido █</div>
+                    <div class="small">█████████</div>
+                </div>
+            `;
+        }
+        
+        setTimeout(() => {
+            frame.classList.remove('corrupted');
+            loadSystemFrame(frameId.replace('frame', 'content'));
+        }, 3000);
+    }
+}
+
+// Simulate dial-up loading times and connection interruptions
+let connectionStable = true;
+
+function simulateDialUpLoading() {
+    if (Math.random() > 0.9) {
+        connectionStable = false;
+        document.body.style.filter = 'blur(0.5px)';
+        
+        // Show connection error
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            z-index: 10000;
+        `;
+        errorDiv.innerHTML = `
+            <strong>Error de Conexión</strong><br>
+            La página no puede mostrarse.<br>
+            <button onclick="this.parentElement.remove(); document.body.style.filter = 'none'; connectionStable = true;" 
+                    style="margin-top: 5px; font-size: 9px;">Reintentar</button>
+        `;
+        document.body.appendChild(errorDiv);
+        
+        setTimeout(() => {
+            if (errorDiv.parentElement) {
+                errorDiv.remove();
+                document.body.style.filter = 'none';
+                connectionStable = true;
+            }
+        }, 3000);
+    }
+}
+
+// Browser status bar simulation
+function createStatusBar() {
+    const statusBar = document.createElement('div');
+    statusBar.id = 'status-bar';
+    statusBar.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: #c0c0c0;
+        border-top: 1px solid #808080;
+        font-family: Arial, sans-serif;
+        font-size: 9px;
+        padding: 2px 5px;
+        z-index: 1000;
+        color: #000;
+    `;
+    statusBar.innerHTML = 'Listo';
+    document.body.appendChild(statusBar);
+}
+
+// Update status bar with Lialina-style messages
+function updateStatusBar(message) {
+    const statusBar = document.getElementById('status-bar');
+    if (statusBar) {
+        statusBar.innerHTML = message;
+        setTimeout(() => {
+            if (statusBar) statusBar.innerHTML = 'Listo';
+        }, 2000);
+    }
+}
+
+// Hyperlink title tooltips (Lialina's technique)
+function addHyperlinkTitles() {
+    const links = document.querySelectorAll('a');
+    const ghostlyTitles = [
+        'Click aquí para recordar',
+        'Enlace al pasado',
+        'Navegando por la memoria',
+        'Papá está en este enlace',
+        'Presencia invisible',
+        'Camino hacia la ausencia',
+        'Tu voz está aquí',
+        'Recuerdo fragmentado'
+    ];
+    
+    links.forEach(link => {
+        if (!link.title) {
+            link.title = ghostlyTitles[Math.floor(Math.random() * ghostlyTitles.length)];
+        }
+    });
+}
+
+// Add vernacular web elements randomly
+function addVernacularElements() {
+    if (Math.random() > 0.7) {
+        const frames = document.querySelectorAll('.frame-content');
+        if (frames.length > 0) {
+            const randomFrame = frames[Math.floor(Math.random() * frames.length)];
+            
+            const elements = [
+                '<div class="small" style="text-align: center; margin: 5px 0;"><div class="under-construction">🚧 PÁGINA EN CONSTRUCCIÓN 🚧</div></div>',
+                '<div class="small" style="margin: 5px 0;"><div class="visitor-counter">Eres el visitante número: 00001</div></div>',
+                '<div style="text-align: center; margin: 5px 0;"><div class="broken-image"></div></div>',
+                '<div style="margin: 5px 0;"><div class="loading-text">Cargando recuerdos desde el servidor...</div></div>'
+            ];
+            
+            const randomElement = elements[Math.floor(Math.random() * elements.length)];
+            randomFrame.innerHTML += randomElement;
+        }
+    }
+}
+
+// Mouse tracking (early web aesthetic)
+let mouseTrail = [];
+function createMouseTrail(e) {
+    if (mouseTrail.length > 5) {
+        const oldTrail = mouseTrail.shift();
+        if (oldTrail && oldTrail.parentElement) {
+            oldTrail.remove();
+        }
+    }
+    
+    const trail = document.createElement('div');
+    trail.style.cssText = `
+        position: fixed;
+        left: ${e.clientX}px;
+        top: ${e.clientY}px;
+        width: 3px;
+        height: 3px;
+        background: #000;
+        pointer-events: none;
+        z-index: 9999;
+        animation: fadeTrail 1s ease-out forwards;
+    `;
+    
+    document.body.appendChild(trail);
+    mouseTrail.push(trail);
+}
+
+// Add fade trail animation
+const trailStyle = document.createElement('style');
+trailStyle.textContent = `
+    @keyframes fadeTrail {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0); }
+    }
+`;
+document.head.appendChild(trailStyle);
+// Auto-corruption system and experimental behaviors
+setInterval(() => {
+    if (Math.random() > 0.95 && frameCounter > 3) {
+        const randomFrame = Math.floor(Math.random() * frameCounter) + 1;
+        const frameId = `frame${randomFrame}a`;
+        if (document.getElementById(frameId)) {
+            corruptFrame(frameId);
+        }
+    }
+}, 10000);
+
+// Periodic vernacular elements
+setInterval(addVernacularElements, 15000);
+
+// Periodic hyperlink title updates
+setInterval(addHyperlinkTitles, 8000);
+
+// Simulate dial-up interruptions
+setInterval(simulateDialUpLoading, 20000);
+
+// Mouse trail effect (90s web aesthetic)
+let mouseTrailEnabled = false;
+document.addEventListener('mousemove', (e) => {
+    if (mouseTrailEnabled && Math.random() > 0.8) {
+        createMouseTrail(e);
+    }
+});
+
+// Toggle mouse trail randomly
+setInterval(() => {
+    mouseTrailEnabled = Math.random() > 0.7;
+}, 10000);
+
+// Update status bar on interactions
+document.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+        const statusMessages = [
+            'Navegando hacia el recuerdo...',
+            'Conectando con el más allá...',
+            'Fragmentando la memoria...',
+            'Buscando a papá...',
+            'Cargando presencia invisible...'
+        ];
+        updateStatusBar(statusMessages[Math.floor(Math.random() * statusMessages.length)]);
+    }
+});
+
+// Simulate slow loading times
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'A') {
+        e.target.innerHTML = '<span class="loading">...</span>';
+        setTimeout(() => {
+            e.target.style.pointerEvents = 'none';
+        }, 500);
+    }
+});
+
+// Initialize the first frame properly
+window.onload = function() {
+    document.body.innerHTML = `
+        <div class="frame" id="frame1" onclick="subdivideFrame('frame1', 'ritual')" style="left: 0; top: 0; width: 100%; height: 100%;">
+            <div class="frame-content">
+                <div class="center">
+                    <h2>GEOGRAFÍA DE LA AUSENCIA</h2>
+                </div>
+                <hr>
+                <div class="mono small">
+                    >> <span class="blink">_</span>
+                </div>
+                <br>
+                <div style="text-align: center;">
+                    <a onclick="event.stopPropagation(); subdivideFrame('frame1', 'ritual')">COMENZAR</a>
+                </div>
+            </div>
+        </div>
+    `;
+};
+</script>
+
+</body>
+</html>
