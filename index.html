@@ -13,6 +13,11 @@
             background: #fff;
             color: #000;
             overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        * {
+            cursor: crosshair !important;
         }
         
         .frame {
@@ -20,11 +25,27 @@
             border: 2px solid #000;
             background: #fff;
             overflow: hidden;
-            cursor: crosshair;
+            transition: z-index 0.2s ease;
         }
         
         .frame:hover {
             background: #f8f8f8;
+            z-index: 1000 !important;
+        }
+        
+        .frame.layer-front {
+            z-index: 800;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+        }
+        
+        .frame.layer-middle {
+            z-index: 400;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .frame.layer-back {
+            z-index: 100;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
         .frame-content {
@@ -47,24 +68,12 @@
             50% { transform: scale(1.1); }
         }
         
-        /* Vernacular web elements */
-        .under-construction {
-            background: repeating-linear-gradient(
-                45deg,
-                #ffff00,
-                #ffff00 10px,
-                #000 10px,
-                #000 20px
-            );
-            color: #000;
-            padding: 2px;
-            font-size: 8px;
-            animation: construction 2s infinite;
-        }
-        
-        @keyframes construction {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        /* Simple image display */
+        .simple-image {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            margin: 0 auto;
         }
         
         .visitor-counter {
@@ -76,45 +85,20 @@
             background: #fff;
         }
         
-        .broken-image {
-            width: 50px;
-            height: 30px;
-            border: 1px solid #000;
-            background: #fff;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .broken-image::before {
-            content: "🖼️";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 12px;
-        }
-        
-        .broken-image::after {
-            content: "IMG";
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            font-size: 6px;
-            font-family: "Courier New", monospace;
-        }
-        
-        /* Slow loading simulation */
-        .loading-text {
-            animation: loadingType 3s steps(20) infinite;
+        /* Slow typing simulation */
+        .typing-text {
+            animation: typeText 4s steps(30) infinite;
             font-family: "Courier New", monospace;
             font-size: 10px;
             overflow: hidden;
             white-space: nowrap;
+            font-style: italic;
         }
         
-        @keyframes loadingType {
-            from { width: 0; }
-            to { width: 100%; }
+        @keyframes typeText {
+            0% { width: 0; }
+            70% { width: 100%; }
+            100% { width: 100%; }
         }
         
         /* Browser chrome simulation */
@@ -194,17 +178,7 @@
             51%, 100% { opacity: 0; }
         }
         
-        .loading {
-            animation: loadingDots 2s infinite;
-        }
-        
-        @keyframes loadingDots {
-            0% { content: "..."; }
-            25% { content: ".."; }
-            50% { content: "."; }
-            75% { content: ""; }
-            100% { content: "..."; }
-        }
+
         
         .corrupted {
             background: repeating-linear-gradient(
@@ -367,9 +341,9 @@ a escuchar lo invisible.`,
     
     teorema: {
         title: "6. TEOREMA",
-        text: `Si papá = ausencia
+        text: `Si muerte = ausencia
 y ausencia = presencia
-entonces papá = presente
+entonces muerte = presente
 
 `,
         links: [
@@ -383,7 +357,7 @@ entonces papá = presente
         text: `Tu forma de decir mi nombre
 ---como quien abre una ventana---
 El olor de tu loción
-mezclada con pintadito.
+mezclada con pintado.
 Tus libros subrayados con lápiz
 ---nunca lapicera---
 porque "las ideas pueden cambiar, mamita".
@@ -473,48 +447,12 @@ escribo porque me recuerdas
 escribo porque aún estás aquí.`,
         links: [
             { text: "volver al principio", target: "ritual" },
-            { text: "seguir escribiendo", target: "echo" }
-        ]
-    },
-    
-    echo: {
-        title: "ECO",
-        text: `...aún estás aquí
-...invisible pero cierta
-...sigue en la mía
-...tiempo presente`,
-        links: [
-            { text: "otra vez", target: "ritual" },
-            { text: "más profundo", target: "fragments" }
-        ]
-    },
-    
-    fragments: {
-        title: "FRAGMENTOS",
-        text: `mamita
-las ideas pueden cambiar
-no me fui
-tu silla vacía`,
-        links: [
-            { text: "papá", target: "dialogo" },
-            { text: "continuar", target: "loop" }
-        ]
-    },
-    
-    loop: {
-        title: "BUCLE INFINITO",
-        text: `Cada vez que termino
-vuelvo a empezar.
-Cada vez que empiezo
-recuerdo el final.`,
-        links: [
-            { text: "otra geografía", target: "ritual" },
-            { text: "perderse", target: "void" }
+            { text: "continuar", target: "ritual" }
         ]
     },
     
     void: {
-        title: "VACÍO",
+        title: "...",
         text: `...`,
         links: [
             { text: "regresar", target: "ritual" },
@@ -564,104 +502,86 @@ function subdivideFrame(frameId, contentKey, event) {
     
     if (frameRect.width > minWidth * 3 && frameRect.height > minHeight * 3) {
         // Large frames can be divided into quads or triples
-        subdivisionType = Math.random() > 0.3 ? 'quad' : (Math.random() > 0.5 ? 'triple-h' : 'triple-v');
+        const options = ['quad', 'triple-h', 'triple-v', 'horizontal', 'vertical'];
+        subdivisionType = options[Math.floor(Math.random() * options.length)];
     } else if (aspectRatio > 1.5) {
-        // Wide frames - divide vertically
-        subdivisionType = 'vertical';
+        // Wide frames - can divide vertically or horizontally
+        subdivisionType = Math.random() > 0.3 ? 'vertical' : 'horizontal';
     } else if (aspectRatio < 0.7) {
-        // Tall frames - divide horizontally
-        subdivisionType = 'horizontal';
+        // Tall frames - can divide horizontally or vertically  
+        subdivisionType = Math.random() > 0.3 ? 'horizontal' : 'vertical';
     } else {
-        // Square-ish frames - choose randomly between horizontal and vertical
-        subdivisionType = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+        // Square-ish frames - choose randomly between all options
+        const options = ['horizontal', 'vertical', 'quad'];
+        subdivisionType = options[Math.floor(Math.random() * options.length)];
     }
     
-    let newFramesHTML = '';
+    let newFramesHTML = ''; // This will be replaced by individual frame creation
     
-    if (subdivisionType === 'quad') {
-        // Divide into 4 quadrants
-        newFramesHTML = `
-            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())" 
-                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
-                <div class="frame-content" id="content${frameCounter}a"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
-                 style="left: ${relativeLeft + relativeWidth/2}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
-                <div class="frame-content" id="content${frameCounter}b"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}c" onclick="subdivideFrame('frame${frameCounter}c', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop + relativeHeight/2}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
-                <div class="frame-content" id="content${frameCounter}c"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}d" onclick="subdivideFrame('frame${frameCounter}d', getRandomContent())"
-                 style="left: ${relativeLeft + relativeWidth/2}%; top: ${relativeTop + relativeHeight/2}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
-                <div class="frame-content" id="content${frameCounter}d"></div>
-            </div>
-        `;
-    } else if (subdivisionType === 'triple-h') {
-        // Three horizontal strips
-        newFramesHTML = `
-            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
-                <div class="frame-content" id="content${frameCounter}a"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop + relativeHeight/3}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
-                <div class="frame-content" id="content${frameCounter}b"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}c" onclick="subdivideFrame('frame${frameCounter}c', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop + 2*relativeHeight/3}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
-                <div class="frame-content" id="content${frameCounter}c"></div>
-            </div>
-        `;
-    } else if (subdivisionType === 'triple-v') {
-        // Three vertical columns
-        newFramesHTML = `
-            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
-                <div class="frame-content" id="content${frameCounter}a"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
-                 style="left: ${relativeLeft + relativeWidth/3}%; top: ${relativeTop}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
-                <div class="frame-content" id="content${frameCounter}b"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}c" onclick="subdivideFrame('frame${frameCounter}c', getRandomContent())"
-                 style="left: ${relativeLeft + 2*relativeWidth/3}%; top: ${relativeTop}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
-                <div class="frame-content" id="content${frameCounter}c"></div>
-            </div>
-        `;
-    } else if (subdivisionType === 'horizontal') {
-        // Split horizontally
-        newFramesHTML = `
-            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight}%;">
-                <div class="frame-content" id="content${frameCounter}a"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
-                 style="left: ${relativeLeft + relativeWidth/2}%; top: ${relativeTop}%; width: ${relativeWidth/2}%; height: ${relativeHeight}%;">
-                <div class="frame-content" id="content${frameCounter}b"></div>
-            </div>
-        `;
-    } else {
-        // Split vertically
-        newFramesHTML = `
-            <div class="frame" id="frame${frameCounter}a" onclick="subdivideFrame('frame${frameCounter}a', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop}%; width: ${relativeWidth}%; height: ${relativeHeight/2}%;">
-                <div class="frame-content" id="content${frameCounter}a"></div>
-            </div>
-            <div class="frame" id="frame${frameCounter}b" onclick="subdivideFrame('frame${frameCounter}b', getRandomContent())"
-                 style="left: ${relativeLeft}%; top: ${relativeTop + relativeHeight/2}%; width: ${relativeWidth}%; height: ${relativeHeight/2}%;">
-                <div class="frame-content" id="content${frameCounter}b"></div>
-            </div>
-        `;
-    }
-    
-    // Remove the original frame and add new ones
+    // Remove the original frame and add new ones with layering
     frame.remove();
-    parentFrame.insertAdjacentHTML('beforeend', newFramesHTML);
+    
+    // Add layering logic - some frames appear behind, some in front
+    const newFrameIds = ['a', 'b', 'c', 'd'].slice(0, subdivisionType === 'quad' ? 4 : subdivisionType.includes('triple') ? 3 : 2);
+    
+    newFrameIds.forEach((suffix, index) => {
+        // Assign random layers
+        const layers = ['layer-back', 'layer-middle', 'layer-front'];
+        const randomLayer = layers[Math.floor(Math.random() * layers.length)];
+        
+        // Some frames might overlap slightly for depth effect
+        const shouldOffset = Math.random() > 0.7;
+        let offsetX = 0, offsetY = 0;
+        
+        if (shouldOffset) {
+            offsetX = (Math.random() - 0.5) * 3; // -1.5 to 1.5% offset
+            offsetY = (Math.random() - 0.5) * 3;
+        }
+        
+        // Modify the frame HTML to include layering
+        let frameHTML = newFramesHTML;
+        
+        if (subdivisionType === 'quad') {
+            const positions = [
+                { left: relativeLeft, top: relativeTop },
+                { left: relativeLeft + relativeWidth/2, top: relativeTop },
+                { left: relativeLeft, top: relativeTop + relativeHeight/2 },
+                { left: relativeLeft + relativeWidth/2, top: relativeTop + relativeHeight/2 }
+            ];
+            
+            const pos = positions[index];
+            frameHTML = `<div class="frame ${randomLayer}" id="frame${frameCounter}${suffix}" onclick="subdivideFrame('frame${frameCounter}${suffix}', getRandomContent())" 
+                         style="left: ${pos.left + offsetX}%; top: ${pos.top + offsetY}%; width: ${relativeWidth/2}%; height: ${relativeHeight/2}%;">
+                        <div class="frame-content" id="content${frameCounter}${suffix}"></div>
+                    </div>`;
+        } else if (subdivisionType === 'triple-h') {
+            frameHTML = `<div class="frame ${randomLayer}" id="frame${frameCounter}${suffix}" onclick="subdivideFrame('frame${frameCounter}${suffix}', getRandomContent())"
+                         style="left: ${relativeLeft + offsetX}%; top: ${relativeTop + index * relativeHeight/3 + offsetY}%; width: ${relativeWidth}%; height: ${relativeHeight/3}%;">
+                        <div class="frame-content" id="content${frameCounter}${suffix}"></div>
+                    </div>`;
+        } else if (subdivisionType === 'triple-v') {
+            frameHTML = `<div class="frame ${randomLayer}" id="frame${frameCounter}${suffix}" onclick="subdivideFrame('frame${frameCounter}${suffix}', getRandomContent())"
+                         style="left: ${relativeLeft + index * relativeWidth/3 + offsetX}%; top: ${relativeTop + offsetY}%; width: ${relativeWidth/3}%; height: ${relativeHeight}%;">
+                        <div class="frame-content" id="content${frameCounter}${suffix}"></div>
+                    </div>`;
+        } else if (subdivisionType === 'horizontal') {
+            const leftPos = index === 0 ? relativeLeft : relativeLeft + relativeWidth/2;
+            frameHTML = `<div class="frame ${randomLayer}" id="frame${frameCounter}${suffix}" onclick="subdivideFrame('frame${frameCounter}${suffix}', getRandomContent())"
+                         style="left: ${leftPos + offsetX}%; top: ${relativeTop + offsetY}%; width: ${relativeWidth/2}%; height: ${relativeHeight}%;">
+                        <div class="frame-content" id="content${frameCounter}${suffix}"></div>
+                    </div>`;
+        } else { // vertical
+            const topPos = index === 0 ? relativeTop : relativeTop + relativeHeight/2;
+            frameHTML = `<div class="frame ${randomLayer}" id="frame${frameCounter}${suffix}" onclick="subdivideFrame('frame${frameCounter}${suffix}', getRandomContent())"
+                         style="left: ${relativeLeft + offsetX}%; top: ${topPos + offsetY}%; width: ${relativeWidth}%; height: ${relativeHeight/2}%;">
+                        <div class="frame-content" id="content${frameCounter}${suffix}"></div>
+                    </div>`;
+        }
+        
+        parentFrame.insertAdjacentHTML('beforeend', frameHTML);
+    });
     
     // Load content into new frames
-    const newFrameIds = ['a', 'b', 'c', 'd'].slice(0, subdivisionType === 'quad' ? 4 : subdivisionType.includes('triple') ? 3 : 2);
     newFrameIds.forEach((suffix, index) => {
         const newContentId = `content${frameCounter}${suffix}`;
         if (index === 0) {
@@ -682,16 +602,32 @@ function subdivideFrame(frameId, contentKey, event) {
 
 function getRandomContent() {
     const contentKeys = Object.keys(content);
-    return contentKeys[Math.floor(Math.random() * contentKeys.length)];
+    // Aumentar mucho más la probabilidad de fotos
+    const allOptions = [...contentKeys, 'photo', 'photo', 'photo', 'photo', 'photo', 'photo']; // 6 veces 'photo' para mucha más probabilidad
+    return allOptions[Math.floor(Math.random() * allOptions.length)];
 }
 
 function loadContent(containerId, contentKey) {
     const container = document.getElementById(containerId);
+    
+    // Handle photo content
+    if (contentKey === 'photo') {
+        const photoNumber = Math.floor(Math.random() * 10) + 1;
+        const photoName = `foto_${photoNumber.toString().padStart(2, '0')}.png`;
+        
+        container.innerHTML = `
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center;">
+                <img src="${photoName}" alt="foto" class="simple-image" onerror="this.outerHTML='<div style=\\'width:60px;height:40px;background:#f5f5f5;border:1px dashed #aaa;display:flex;align-items:center;justify-content:center;font-size:7px;font-family:Courier;\\'>foto_${photoNumber.toString().padStart(2, '0')}</div>'">
+            </div>
+        `;
+        return;
+    }
+    
     const data = content[contentKey];
     
     if (!data) {
-        // Si no encuentra el contenido, crear uno aleatorio
-        const randomTitles = ["MEMORIA PERDIDA", "RASTRO", "HUELLA", "SOMBRA"];
+        // Si no encuentra el contenido, usar frases de los textos originales
+        const randomTitles = ["papá", "aquí estoy", "mamita"];
         const randomTexts = [
             "papá\n¿dónde estás?",
             "tu risa\n---su risa---\nla misma música",
@@ -707,8 +643,8 @@ function loadContent(containerId, contentKey) {
             <pre>${randomText}</pre>
             <hr>
             <div class="small">
-                <a onclick="subdivideFrame('${containerId.replace('content', 'frame')}', 'ritual')">volver</a> | 
-                <a onclick="subdivideFrame('${containerId.replace('content', 'frame')}', 'dialogo')">buscar</a>
+                <a onclick="event.stopPropagation(); subdivideFrame('${containerId.replace('content', 'frame')}', 'ritual')">volver</a> | 
+                <a onclick="event.stopPropagation(); subdivideFrame('${containerId.replace('content', 'frame')}', 'dialogo')">buscar</a>
             </div>
             <br>
             <div class="mono small">
@@ -759,21 +695,39 @@ function loadNavigationFrame(containerId, contentKey) {
 function loadSystemFrame(containerId) {
     const container = document.getElementById(containerId);
     const messages = [
-        'Presencia detectada',
-        'Memoria fragmentada', 
         'tu silla vacía',
-        'Ausencia = presente',
         'papá',
-        'aquí estoy'
+        'aquí estoy',
+        'mamita',
+        'las ideas pueden cambiar',
+        'por eso no me fui'
+    ];
+    
+    const typingPhrases = [
+        'preparo dos cafés',
+        'el tuyo se enfría',
+        'tu silla vacía más presente que mi cuerpo',
+        'los fantasmas habitan en los gestos heredados',
+        'tu risa ---su risa--- la misma música',
+        'tu ausencia ocupa lugar',
+        'presencia perfecta de lo que no está',
+        'los sonidos que dejaste siguen sonando',
+        'todo lo que eras sigue siendo en todo lo que soy',
+        'aquí estoy',
+        'mírate las cejas',
+        'son iguales a las tuyas',
+        'por eso no me fui',
+        'no escribo sobre tu muerte',
+        'escribo porque aún estás aquí',
+        'las ideas pueden cambiar',
+        'mamita'
     ];
     
     const vernacularElements = [
-        '<div class="under-construction">🚧 EN CONSTRUCCIÓN 🚧</div>',
-        '<div class="visitor-counter">👁️ Visitantes: 00001</div>',
-        '<div class="broken-image"></div>',
+        '<div class="visitor-counter">Visitantes: 00001</div>',
         '<div class="gif-placeholder">GIF</div>',
         '<div class="browser-bar">Netscape Navigator - [Página sin título]</div>',
-        '<div class="loading-text">Estableciendo conexión con servidor...</div>'
+        `<div class="typing-text">${typingPhrases[Math.floor(Math.random() * typingPhrases.length)]}</div>`
     ];
     
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -814,46 +768,6 @@ function corruptFrame(frameId) {
         setTimeout(() => {
             frame.classList.remove('corrupted');
             loadSystemFrame(frameId.replace('frame', 'content'));
-        }, 3000);
-    }
-}
-
-// Simulate dial-up loading times and connection interruptions
-let connectionStable = true;
-
-function simulateDialUpLoading() {
-    if (Math.random() > 0.9) {
-        connectionStable = false;
-        document.body.style.filter = 'blur(0.5px)';
-        
-        // Show connection error
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #c0c0c0;
-            border: 2px outset #c0c0c0;
-            padding: 10px;
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            z-index: 10000;
-        `;
-        errorDiv.innerHTML = `
-            <strong>Error de Conexión</strong><br>
-            La página no puede mostrarse.<br>
-            <button onclick="this.parentElement.remove(); document.body.style.filter = 'none'; connectionStable = true;" 
-                    style="margin-top: 5px; font-size: 9px;">Reintentar</button>
-        `;
-        document.body.appendChild(errorDiv);
-        
-        setTimeout(() => {
-            if (errorDiv.parentElement) {
-                errorDiv.remove();
-                document.body.style.filter = 'none';
-                connectionStable = true;
-            }
         }, 3000);
     }
 }
@@ -919,11 +833,25 @@ function addVernacularElements() {
         if (frames.length > 0) {
             const randomFrame = frames[Math.floor(Math.random() * frames.length)];
             
+            const typingPhrases = [
+                'preparo dos cafés',
+                'el tuyo se enfría',
+                'tu silla vacía más presente',
+                'los fantasmas habitan en los gestos',
+                'tu risa ---su risa---',
+                'tu ausencia ocupa lugar',
+                'los sonidos que dejaste',
+                'todo lo que eras sigue siendo',
+                'mírate las cejas',
+                'por eso no me fui',
+                'escribo porque aún estás aquí',
+                'las ideas pueden cambiar',
+                'mamita'
+            ];
+            
             const elements = [
-                '<div class="small" style="text-align: center; margin: 5px 0;"><div class="under-construction">🚧 PÁGINA EN CONSTRUCCIÓN 🚧</div></div>',
                 '<div class="small" style="margin: 5px 0;"><div class="visitor-counter">Eres el visitante número: 00001</div></div>',
-                '<div style="text-align: center; margin: 5px 0;"><div class="broken-image"></div></div>',
-                '<div style="margin: 5px 0;"><div class="loading-text">Cargando recuerdos desde el servidor...</div></div>'
+                `<div style="margin: 5px 0;"><div class="typing-text">${typingPhrases[Math.floor(Math.random() * typingPhrases.length)]}</div></div>`
             ];
             
             const randomElement = elements[Math.floor(Math.random() * elements.length)];
@@ -985,9 +913,6 @@ setInterval(addVernacularElements, 15000);
 // Periodic hyperlink title updates
 setInterval(addHyperlinkTitles, 8000);
 
-// Simulate dial-up interruptions
-setInterval(simulateDialUpLoading, 20000);
-
 // Mouse trail effect (90s web aesthetic)
 let mouseTrailEnabled = false;
 document.addEventListener('mousemove', (e) => {
@@ -1005,11 +930,11 @@ setInterval(() => {
 document.addEventListener('click', (e) => {
     if (e.target.tagName === 'A') {
         const statusMessages = [
-            'Navegando hacia el recuerdo...',
-            'Conectando con el más allá...',
-            'Fragmentando la memoria...',
-            'Buscando a papá...',
-            'Cargando presencia invisible...'
+            'papá...',
+            'aquí estoy',
+            'tu silla vacía',
+            'mamita',
+            'las ideas pueden cambiar'
         ];
         updateStatusBar(statusMessages[Math.floor(Math.random() * statusMessages.length)]);
     }
